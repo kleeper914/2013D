@@ -1,0 +1,110 @@
+/**
+ * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
+ * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
+ * @cliArgs --device "MSPM0G350X" --part "Default" --package "LQFP-48(PT)" --product "mspm0_sdk@2.04.00.06"
+ * @v2CliArgs --device "MSPM0G3507" --package "LQFP-48(PT)" --product "mspm0_sdk@2.04.00.06"
+ * @versions {"tool":"1.23.1+4034"}
+ */
+
+/**
+ * Import the modules used in this configuration.
+ */
+const ADC12  = scripting.addModule("/ti/driverlib/ADC12", {}, false);
+const ADC121 = ADC12.addInstance();
+const DAC12  = scripting.addModule("/ti/driverlib/DAC12");
+const GPIO   = scripting.addModule("/ti/driverlib/GPIO", {}, false);
+const GPIO1  = GPIO.addInstance();
+const SYSCTL = scripting.addModule("/ti/driverlib/SYSCTL");
+const UART   = scripting.addModule("/ti/driverlib/UART", {}, false);
+const UART1  = UART.addInstance();
+const UART2  = UART.addInstance();
+
+/**
+ * Write custom configuration values to the imported modules.
+ */
+const divider9       = system.clockTree["UDIV"];
+divider9.divideValue = 2;
+
+const gate8  = system.clockTree["MFPCLKGATE"];
+gate8.enable = true;
+
+const multiplier2         = system.clockTree["PLL_QDIV"];
+multiplier2.multiplyValue = 4;
+
+const mux8       = system.clockTree["HSCLKMUX"];
+mux8.inputSelect = "HSCLKMUX_SYSPLL0";
+
+const mux12       = system.clockTree["SYSPLLMUX"];
+mux12.inputSelect = "zSYSPLLMUX_HFCLK";
+
+const pinFunction3                                       = system.clockTree["HFCLKEXT"];
+pinFunction3.enable                                      = true;
+pinFunction3.inputFreq                                   = 40;
+pinFunction3.peripheral.hfclkInPin.$assignAllowConflicts = "PA6";
+
+ADC121.$name                      = "ADC12_0";
+ADC121.adcMem1chansel             = "DL_ADC12_INPUT_CHAN_1";
+ADC121.sampClkDiv                 = "DL_ADC12_CLOCK_DIVIDE_8";
+ADC121.samplingOperationMode      = "sequence";
+ADC121.endAdd                     = 1;
+ADC121.sampleTime0                = "40 us";
+ADC121.enabledInterrupts          = ["DL_ADC12_INTERRUPT_MEM1_RESULT_LOADED"];
+ADC121.adcPin0Config.$name        = "ti_driverlib_gpio_GPIOPinGeneric0";
+ADC121.peripheral.$assign         = "ADC0";
+ADC121.peripheral.adcPin0.$assign = "PA27";
+ADC121.peripheral.adcPin1.$assign = "PA26";
+ADC121.adcPin1Config.$name        = "ti_driverlib_gpio_GPIOPinGeneric1";
+
+const Board                       = scripting.addModule("/ti/driverlib/Board", {}, false);
+Board.peripheral.$assign          = "DEBUGSS";
+Board.peripheral.swclkPin.$assign = "PA20";
+Board.peripheral.swdioPin.$assign = "PA19";
+
+DAC12.dacOutputPinEn            = true;
+DAC12.dacAmplifier              = "ON";
+DAC12.peripheral.OutPin.$assign = "PA15";
+DAC12.OutPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric2";
+
+GPIO1.$name                              = "GPIO_LEDS";
+GPIO1.port                               = "PORTA";
+GPIO1.associatedPins[0].$name            = "PIN_G";
+GPIO1.associatedPins[0].assignedPin      = "4";
+GPIO1.associatedPins[0].internalResistor = "PULL_UP";
+GPIO1.associatedPins[0].pin.$assign      = "PA4";
+
+SYSCTL.forceDefaultClkConfig = true;
+SYSCTL.useHFCLK_Manual       = true;
+SYSCTL.HFCLK_Freq            = 40000000;
+SYSCTL.MFPCLKEn              = true;
+SYSCTL.MFPCLKSource          = "HFCLK";
+SYSCTL.HFCLK4MFPCLKDIV       = "10";
+SYSCTL.clockTreeEn           = true;
+
+UART1.$name                    = "UART_0";
+UART1.targetBaudRate           = 115200;
+UART1.peripheral.rxPin.$assign = "PB18";
+UART1.peripheral.txPin.$assign = "PB17";
+UART1.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric3";
+UART1.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric4";
+
+UART2.$name                    = "UART_1";
+UART2.targetBaudRate           = 115200;
+UART2.enabledInterrupts        = ["RX"];
+UART2.interruptPriority        = "1";
+UART2.peripheral.rxPin.$assign = "PA11";
+UART2.peripheral.txPin.$assign = "PA10";
+UART2.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric5";
+UART2.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric6";
+
+const ProjectConfig              = scripting.addModule("/ti/project_config/ProjectConfig", {}, false);
+ProjectConfig.migrationCondition = true;
+
+/**
+ * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future
+ * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
+ * re-solve from scratch.
+ */
+pinFunction3.peripheral.$suggestSolution = "SYSCTL";
+DAC12.peripheral.$suggestSolution        = "DAC0";
+UART1.peripheral.$suggestSolution        = "UART2";
+UART2.peripheral.$suggestSolution        = "UART0";

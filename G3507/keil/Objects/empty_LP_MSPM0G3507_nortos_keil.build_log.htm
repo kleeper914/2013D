@@ -1,0 +1,368 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.23.0.0
+Copyright (C) 2017 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: kleeper roy, none, LIC=UJWP0-BDSMM-UH98H-W4RMH-5SI4S-2HYYC
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.23
+Toolchain Path:  D:\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.6
+Assembler:       Armasm.exe V6.6
+Linker/Locator:  ArmLink.exe V6.6
+Library Manager: ArmAr.exe V6.6
+Hex Converter:   FromElf.exe V6.6
+CPU DLL:         SARMCM3.DLL V5.23
+Dialog DLL:      DARMCM1.DLL V1.17.0.0
+Target DLL:      CMSIS_AGDI.dll V1.27.5.0
+Dialog DLL:      TARMCM1.DLL V1.12.0.0
+ 
+<h2>Project:</h2>
+D:\ti\mspm0_sdk_2_04_00_06\examples\nortos\LP_MSPM0G3507\driverlib\assign2\keil\empty_LP_MSPM0G3507_nortos_keil.uvprojx
+Project File Date:  04/22/2025
+
+<h2>Output:</h2>
+*** Using Compiler 'V6.6', folder: 'D:\Keil_v5\ARM\ARMCLANG\Bin'
+Rebuild target 'empty_LP_MSPM0G3507_nortos_keil'
+Before Build - User command #1: cmd.exe /C "D:\ti\mspm0_sdk_2_04_00_06\examples\nortos\LP_MSPM0G3507\driverlib\assign2\keil\../../../../../../tools/keil/syscfg.bat 'D:\ti\mspm0_sdk_2_04_00_06\examples\nortos\LP_MSPM0G3507\driverlib\assign2\keil\' empty.syscfg"
+Using Sysconfig Tool from "D:\ti\sysconfig_1.23.1\sysconfig_cli.bat"
+"Update the file located at <sdk path>/tools/keil/syscfg.bat to use a different version"
+Running script...
+Validating...
+warning: /ti/driverlib/SYSCTL: For best practices when the CPUCLK is running at 32MHz and above, clear the flash status bit using DL_FlashCTL_executeClearStatus() before executing any flash operation. Otherwise there may be false positives.
+info: ADC12_0(/ti/driverlib/ADC12) totalConversionRate: When Power Down Mode is set to Auto, ADC wakeup time may need to be considered in each sample window. Refer to the device specific data sheet for specifications on the ADC Wakeup Time.
+info: /ti/driverlib/DAC12 calcVoltage: Assuming VDDA = 3.3V for calculated value.
+0 error(s), 1 warning(s)
+Generating Code (empty.syscfg)...
+Unchanged D:\ti\mspm0_sdk_2_04_00_06\examples\nortos\LP_MSPM0G3507\driverlib\assign2\ti_msp_dl_config.c...
+Unchanged D:\ti\mspm0_sdk_2_04_00_06\examples\nortos\LP_MSPM0G3507\driverlib\assign2\ti_msp_dl_config.h...
+Unchanged D:\ti\mspm0_sdk_2_04_00_06\examples\nortos\LP_MSPM0G3507\driverlib\assign2\Event.dot...
+assembling startup_mspm0g350x_uvision.s...
+../ti_msp_dl_config.h(54): warning: In file included from...
+../../../../../../source\ti/devices/msp/msp.h(58): warning: In file included from...
+../../../../../../source\ti/devices/msp/m0p/mspm0g350x.h(220): warning: In file included from...
+../../../../../../source\ti/devices/msp/peripherals/m0p/hw_sysctl.h(70): warning: no newline at end of file [-Wnewline-eof]
+#endif /* ti_devices_msp_peripheral_m0p_sysctl__include */
+                                                          ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(36): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_adc12.h(59): warning: In file included from...
+../../../../../../source\ti/driverlib/m0p/dl_factoryregion.h(227): warning: implicit conversion loses integer precision: 'uint16_t' (aka 'unsigned short') to 'uint8_t' (aka 'unsigned char') [-Wconversion]
+    return flashSize;
+    ~~~~~~ ^~~~~~~~~
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(40): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_comp.h(222): warning: ISO C restricts enumerator values to range of 'int' (2147483648 is too large) [-Wpedantic]
+    DL_COMP_ENABLE_CHANNEL_NEG = COMP_CTL0_IMEN_ENABLE,
+    ^                            ~~~~~~~~~~~~~~~~~~~~~
+../../../../../../source\ti/driverlib/dl_comp.h(224): warning: ISO C restricts enumerator values to range of 'int' (2147516416 is too large) [-Wpedantic]
+    DL_COMP_ENABLE_CHANNEL_POS_NEG =
+    ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(45): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_flashctl.h(60): warning: In file included from...
+../../../../../../source\ti/driverlib/m0p/dl_sysctl.h(52): warning: In file included from...
+../../../../../../source\ti/driverlib/m0p/sysctl/dl_sysctl_mspm0g1x0x_g3x0x.h(1035): warning: must specify at least one argument for '...' parameter of variadic macro [-Wgnu-zero-variadic-macro-arguments]
+    DL_SYSCTL_setMCLKSource(LFCLK, SYSOSC);
+                                         ^
+../../../../../../source\ti/driverlib/m0p/sysctl/dl_sysctl_mspm0g1x0x_g3x0x.h(974): note: macro 'DL_SYSCTL_setMCLKSource' defined here
+#define DL_SYSCTL_setMCLKSource(current, next, ...) \
+        ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(45): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_flashctl.h(963): warning: unused parameter 'flashctl' [-Wunused-parameter]
+    FLASHCTL_Regs *flashctl, uint32_t addr)
+                   ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(47): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_gpio.h(2810): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../../../../../../source\ti/driverlib/dl_gpio.h(2837): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../../../../../../source\ti/driverlib/dl_gpio.h(2914): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(48): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_i2c.h(3681): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../../../../../../source\ti/driverlib/dl_i2c.h(3710): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../../../../../../source\ti/driverlib all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(63): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_timera.h(56): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_timer.h(1834): warning: ISO C restricts enumerator values to range of 'int' (2147483648 is too large) [-Wpedantic]
+    DL_TIMER_SEC_COMP_DOWN_EVT_SEL_CC4 = (GPTIMER_CCCTL_01_CC2SELD_SEL_CCD4),
+    ^                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../../source\ti/driverlib/dl_timer.h(1837): warning: ISO C restricts enumerator values to range of 'int' (2684354560 is too large) [-Wpedantic]
+    DL_TIMER_SEC_COMP_DOWN_EVT_SEL_CC5 = (GPTIMER_CCCTL_01_CC2SELD_SEL_CCD5),
+    ^                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../../source\ti/driverlib/dl_timer.h(1922): warning: ISO C restricts enumerator values to range of 'int' (2147483648 is too large) [-Wpedantic]
+    DL_TIMER_FORCE_CMPL_OUT_LOW = (GPTIMER_CCACT_01_SWFRCACT_CMPL_CCP_LOW),
+    ^                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(65): warning: In file included from...
+d from ../ti_msp_dl_config.h:55:
+../../../../../../source\ti/driverlib/driverlib.h(65): warning: In file included from...
+__STATIC_INLINE bool DL_TRNG_isPowerEnabled(TRNG_Regs *trng)
+                                                       ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(68): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_vref.h(242): warning: unused parameter 'vref' [-Wunused-parameter]
+__STATIC_INLINE bool DL_VREF_isPowerEnabled(VREF_Regs *vref)
+                                                       ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(45): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_flashctl.h(60): warning: In file included from...
+../../../../../../source\ti/driverlib/m0p/dl_sysctl.h(52): warning: In file included from...
+../../../../../../source\ti/driverlib/m0p/sysctl/dl_sysctl_mspm0g1x0x_g3x0x.h(337): warning: padding struct 'DL_SYSCTL_SYSPLLConfig' with 2 bytes to align 'qDiv' [-Wpadded]
+    uint32_t qDiv;
+             ^
+../../../../../../source\ti/driverlib/m0p/sysctl/dl_sysctl_mspm0g1x0x_g3x0x.h(341): warning: padding struct 'DL_SYSCTL_SYSPLLConfig' with 3 bytes to align 'inputFreq' [-Wpadded]
+    DL_SYSCTL_SYSPLL_INPUT_FREQ inputFreq;
+                                ^
+../ti_msp_dl_config.c(129): warning: cast from 'const DL_SYSCTL_SYSPLLConfig *' to 'DL_SYSCTL_SYSPLLConfig *' drops const qualifier [-Wcast-qual]
+    DL_SYSCTL_configSYSPLL((DL_SYSCTL_SYSPLLConfig *) &gSYSPLLConfig);
+                                                      ^
+../ti_msp_dl_config.c(155): warning: cast from 'const DL_UART_ClockConfig *' to 'DL_UART_ClockConfig *' drops const qualifier [-Wcast-qual]
+    DL_UART_Main_setClockConfig(UART_0_INST, (DL_UART_Main_ClockConfig *) &gUART_0ClockConfig);
+                                                                          ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(66): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_uart_extend.h(53): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_uart.h(523): warning: padding struct 'DL_UART_Config' with 1 byte to align 'flowControl' [-Wpadded]
+    DL_UART_FLOW_CONTROL flowControl;
+                         ^
+../../../../../../source\ti/driverlib/dl_uart.h(515): warning: padding size of 'DL_UART_Config' with 1 byte to alignment boundary [-Wpadded]
+typedef struct {
+        ^
+../ti_msp_dl_config.c(157): warning: cast from 'const DL_UART_Config *' to 'DL_UART_Config *' drops const qualifier [-Wcast-qual]
+    DL_UART_Main_init(UART_0_INST, (DL_UART_Main_Config *) &gUART_0Config);
+                                                           ^
+../ti_msp_dl_config.c(187): warning: cast from 'const DL_UART_ClockConfig *' to 'DL_UART_ClockConfig *' drops const qualifier [-Wcast-qual]
+    DL_UART_Main_setClockConfig(UART_1_INST, (DL_UART_Main_ClockConfig *) &gUART_1ClockConfig);
+                                                                          ^
+../ti_msp_dl_config.c(189): warning: cast from 'const DL_UART_Config *' to 'DL_UART_Config *' drops const qualifier [-Wcast-qual]
+    DL_UART_Main_init(UART_1_INST, (DL_UART_Main_Config *) &gUART_1Config);
+                                                           ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(36): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_adc12.h(1142): warning: padding struct 'DL_ADC12_ClockConfig' with 2 bytes to align 'divideRatio' [-Wpadded]
+    DL_ADC12_CLOCK_DIVIDE divideRatio;
+                          ^
+../ti_msp_dl_config.c(217): warning: cast from 'const DL_ADC12_ClockConfig *' to 'DL_ADC12_ClockConfig *' drops const qualifier [-Wcast-qual]
+    DL_ADC12_setClockConfig(ADC12_0_INST, (DL_ADC12_ClockConfig *) &gADC12_0ClockConfig);
+                                                                   ^
+../ti_msp_dl_config.c(41): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(43): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_dac12.h(350): warning: padding struct 'DL_DAC12_Config' with 2 bytes to align 'representation' [-Wpadded]
+    DL_DAC12_REPRESENTATION representation;
+                            ^
+../../../../../../source\ti/driverlib/dl_dac12.h(383): warning: padding struct 'DL_DAC12_Config' with 1 byte to align 'sampleRate' [-Wpadded]
+    DL_DAC12_SAMPLES_PER_SECOND sampleRate;
+                                ^
+../../../../../../source\ti/driverlib/dl_dac12.h(342): warning: padding size of 'DL_DAC12_Config' with 2 bytes to alignment boundary [-Wpadded]
+typedef struct {
+        ^
+../ti_msp_dl_config.c(251): warning: cast from 'const DL_DAC12_Config *' to 'DL_DAC12_Config *' drops const qualifier [-Wcast-qual]
+    DL_DAC12_init(DAC0, (DL_DAC12_Config *) &gDAC12Config);
+                                            ^
+32 warnings generated.
+compiling ti_msp_dl_config.c...
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(54): warning: In file included from...
+../../../../../../source\ti/devices/msp/msp.h(58): warning: In file included from...
+../../../../../../source\ti/devices/msp/m0p/mspm0g350x.h(220): warning: In file included from...
+../../../../../../source\ti/devices/msp/peripherals/m0p/hw_sysctl.h(70): warning: no newline at end of file [-Wnewline-eof]
+#endif /* ti_devices_msp_peripheral_m0p_sysctl__include */
+                                                          ^
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(36): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_adc12.h(59): warning: In file included from...
+../../../../../../source\ti/driverlib/m0p/dl_factoryregion.h(227): warning: implicit conversion loses integer precision: 'uint16_t' (aka 'unsigned short') to 'uint8_t' (aka 'unsigned char') [-Wconversion]
+    return flashSize;
+    ~~~~~~ ^~~~~~~~~
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(40): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_comp.h(222): warning: ISO C restricts enumerator values to range of 'int' (2147483648 is too large) [-Wpedantic]
+    DL_COMP_ENABLE_CHANNEL_NEG = COMP_CTL0_IMEN_ENABLE,
+    ^                            ~~~~~~~~~~~~~~~~~~~~~
+../../../../../../source\ti/driverlib/dl_comp.h(224): warning: ISO C restricts enumerator values to range of 'int' (2147516416 is too large) [-Wpedantic]
+    DL_COMP_ENABLE_CHANNEL_POS_NEG =
+    ^
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(45): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_flashctl.h(60): warning: In file included from...
+../../../../../../source\ti/driverlib/m0p/dl_sysctl.h(52): warning: In file included from...
+../../../../../../source\ti/driverlib/m0p/sysctl/dl_sysctl_mspm0g1x0x_g3x0x.h(1035): warning: must specify at least one argument for '...' parameter of variadic macro [-Wgnu-zero-variadic-macro-arguments]
+    DL_SYSCTL_setMCLKSource(LFCLK, SYSOSC);
+                                         ^
+../../../../../../source\ti/driverlib/m0p/sysctl/dl_sysctl_mspm0g1x0x_g3x0x.h(974): note: macro 'DL_SYSCTL_setMCLKSource' defined here
+#define DL_SYSCTL_setMCLKSource(current, next, ...) \
+        ^
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(45): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_flashctl.h(963): warning: unused parameter 'flashctl' [-Wunused-parameter]
+    FLASHCTL_Regs *flashctl, uint32_t addr)
+                   ^
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(47): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_gpio.h(2810): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../../../../../../source\ti/driverlib/dl_gpio.h(2837): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../../../../../../source\ti/driverlib/dl_gpio.h(2914): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(48): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_i2c.h(3681): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../../../../../../source\ti/driverlib/dl_i2c.h(3710): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../../../../../../source\ti/driverlib/dl_i2c.h(3842): warning: default label in switch which covers all enumeration values [-Wcovered-switch-default]
+        default:
+        ^
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(63): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_timera.h(56): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_timer.h(1834): warning: ISO C restricts enumerator values to range of 'int' (2147483648 is too large) [-Wpedantic]
+    DL_TIMER_SEC_COMP_DOWN_EVT_SEL_CC4 = (GPTIMER_CCCTL_01_CC2SELD_SEL_CCD4),
+    ^                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../../source\ti/driverlib/dl_timer.h(1837): warning: ISO C restricts enumerator values to range of 'int' (2684354560 is too large) [-Wpedantic]
+    DL_TIMER_SEC_COMP_DOWN_EVT_SEL_CC5 = (GPTIMER_CCCTL_01_CC2SELD_SEL_CCD5),
+    ^                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../../source\ti/driverlib/dl_timer.h(1922): warning: ISO C restricts enumerator values to range of 'int' (2147483648 is too large) [-Wpedantic]
+    DL_TIMER_FORCE_CMPL_OUT_LOW = (GPTIMER_CCACT_01_SWFRCACT_CMPL_CCP_LOW),
+    ^                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(65): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_trng.h(248): warning: unused parameter 'trng' [-Wunused-parameter]
+__STATIC_INLINE bool DL_TRNG_isPowerEnabled(TRNG_Regs *trng)
+                                                       ^
+../empty.c(33): warning: In file included from...
+../ti_msp_dl_config.h(55): warning: In file included from...
+../../../../../../source\ti/driverlib/driverlib.h(68): warning: In file included from...
+../../../../../../source\ti/driverlib/dl_vref.h(242): warning: unused parameter 'vref' [-Wunused-parameter]
+__STATIC_INLINE bool DL_VREF_isPowerEnabled(VREF_Regs *vref)
+                                                       ^
+../empty.c(56): warning: no previous extern declaration for non-static variable 'gCheckADC' [-Wmissing-variable-declarations]
+bool gCheckADC = false;
+     ^
+../empty.c(57): warning: no previous extern declaration for non-static variable 'uart_rx_finish' [-Wmissing-variable-declarations]
+bool uart_rx_finish = false;
+     ^
+../empty.c(58): warning: no previous extern declaration for non-static variable 'uart_rx_start' [-Wmissing-variable-declarations]
+bool uart_rx_start = false;
+     ^
+../empty.c(61): warning: no previous extern declaration for non-static variable 'uart_rx_index' [-Wmissing-variable-declarations]
+volatile uint8_t uart_rx_index = 0;             //<BD><D3><CA><U+057B><BA><B3><E5><C7><F8><CB><F7><D2><FD>
+                 ^
+../empty.c(100): warning: 18 enumeration values not explicitly handled in switch: 'DL_ADC12_IIDX_OVERFLOW', 'DL_ADC12_IIDX_TRIG_OVERFLOW', 'DL_ADC12_IIDX_WINDOW_COMP_HIGH'... [-Wswitch-enum]
+    switch (DL_ADC12_getPendingInterrupt(ADC12_0_INST)) {
+            ^
+../empty.c(98): warning: no previous prototype for function 'ADC0_IRQHandler' [-Wmissing-prototypes]
+void ADC12_0_INST_IRQHandler(void)
+     ^
+../ti_msp_dl_config.h(123): note: expanded from macro 'ADC12_0_INST_IRQHandler'
+#define ADC12_0_INST_IRQHandler                                  ADC0_IRQHandler
+                                                                 ^
+../empty.c(110): warning: no previous prototype for function 'UART0_IRQHandler' [-Wmissing-prototypes]
+void UART_1_INST_IRQHandler(void) {
+     ^
+../ti_msp_dl_config.h(103): note: expanded from macro 'UART_1_INST_IRQHandler'
+#define UART_1_INST_IRQHandler                                  UART0_IRQHandler
+                                                                ^
+../empty.c(134): warning: implicit conversion turns floating-point number into integer: 'double' to 'uint16_t' (aka 'unsigned short') [-Wfloat-conversion]
+                uint16_t index = (freq - 1.0) / 0.2f;
+                         ~~~~~   ~~~~~~~~~~~~~^~~~~~
+../empty.c(134): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+                uint16_t index = (freq - 1.0) / 0.2f;
+                                  ^~~~ ~
+../empty.c(134): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+                uint16_t index = (freq - 1.0) / 0.2f;
+                                              ~ ^~~~
+../empty.c(153): warning: passing 'volatile unsigned char [30]' to parameter of type 'unsigned char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+                return findFloat(uart_rx_buffer);
+                                 ^~~~~~~~~~~~~~
+../empty.c(43): note: passing argument to parameter 'str' here
+float findFloat(unsigned char* str);
+                               ^
+../empty.c(146): warning: no previous prototype for function 'getFreq' [-Wmissing-prototypes]
+float getFreq() {
+      ^
+../empty.c(40): note: this declaration is not a prototype; add 'void' to make it a prototype for a zero-parameter function
+float getFreq();
+      ^
+              void
+../empty.c(157): warning: implicit conversion turns floating-point number into integer: 'float' to 'uint16_t' (aka 'unsigned short') [-Wfloat-conversion]
+                uint16_t sendData_1 = freq;             //<D5><FB><CA><FD><B2><BF><B7><D6>
+                         ~~~~~~~~~~   ^~~~
+../empty.c(158): warning: implicit conversion turns floating-point number into integer: 'float' to 'uint16_t' (aka 'unsigned short') [-Wfloat-conversion]
+                uint16_t sendData_2 = (freq - sendData_1) * 10; //<U+04BB><U+03BB><U+0421><CA><FD>
+                         ~~~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~^~~~
+../empty.c(166): warning: implicit conversion loses integer precision: 'int' to 'uint8_t' (aka 'unsigned char') [-Wconversion]
+                sendData((sendData_2) + 48);
+                ~~~~~~~~ ~~~~~~~~~~~~~^~~~
+../empty.c(202): warning: implicit conversion loses floating-point precision: 'double' to 'float' [-Wconversion]
+    return num;
+    ~~~~~~ ^~~
+../empty.c(203): warning: no newline at end of file [-Wnewline-eof]
+}
+ ^
+../empty.c(54): warning: no previous extern declaration for non-static variable 'SamplePoints' [-Wmissing-variable-declarations]
+AmpPoint SamplePoints[SAMPLE_SIZE];     //<B4><U+6D22><B2><C9><D1><F9><CA><E4><B3><F6><D0><U+017A><U+0175><C4><D0><C5><U+03E2>
+         ^
+../empty.c(60): warning: no previous extern declaration for non-static variable 'uart_rx_buffer' [-Wmissing-variable-declarations]
+volatile unsigned char uart_rx_buffer[RX_BUFFER_SIZE];
+                       ^
+36 warnings generated.
+compiling empty.c...
+linking...
+Program Size: Code=1680 RO-data=312 RW-data=0 ZI-data=392  
+FromELF: creating hex file...
+".\Objects\empty_LP_MSPM0G3507_nortos_keil.axf" - 0 Error(s), 66 Warning(s).
+
+<h2>Collection of Component include folders:</h2>
+  .\RTE\_empty_LP_MSPM0G3507_nortos_keil
+
+<h2>Collection of Component Files used:</h2>
+Build Time Elapsed:  00:00:03
+</pre>
+</body>
+</html>
