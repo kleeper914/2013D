@@ -42,8 +42,8 @@ float vol2gain(float voltage);
 float vol2deg(float voltage);
 float findFloat(unsigned char* str);
 
-#define SAMPLE_SIZE	 210		//²ÉÑù1-43MHzÆµÂÊµÄÊä³öÐÅºÅÏà¹ØÆµÂÊ·ù¶È,Ã¿0.2MHz²ÉÑùÒ»¸öµã
-#define RX_BUFFER_SIZE	30	//´®¿Ú½ÓÊÕ»º³åÇø´óÐ¡
+#define SAMPLE_SIZE	 210		//ï¿½ï¿½ï¿½ï¿½1-43MHzÆµï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½Æµï¿½Ê·ï¿½ï¿½ï¿½,Ã¿0.2MHzï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
+#define RX_BUFFER_SIZE	30	//ï¿½ï¿½ï¿½Ú½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
 
 typedef struct{
 	float freq;
@@ -51,36 +51,40 @@ typedef struct{
 	float phase_deg;
 }AmpPoint;
 
-AmpPoint SamplePoints[SAMPLE_SIZE];	//´æ´¢²ÉÑùÊä³öÐÅºÅµÄÐÅÏ¢
+volatile AmpPoint SamplePoints[SAMPLE_SIZE];	//ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÅºÅµï¿½ï¿½ï¿½Ï¢
 
-bool gCheckADC = false;
-bool uart_rx_finish = false;
-bool uart_rx_start = false;
+volatile bool gCheckADC = false;
+volatile bool uart_rx_finish = false;
+volatile bool uart_rx_start = false;
 
 volatile unsigned char uart_rx_buffer[RX_BUFFER_SIZE];
-volatile uint8_t uart_rx_index = 0;		//½ÓÊÕ»º³åÇøË÷Òý
+volatile uint8_t uart_rx_index = 0;		//ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 int main(void)
 {
     SYSCFG_DL_init();
-		NVIC_EnableIRQ(ADC12_0_INST_INT_IRQN);
-		NVIC_EnableIRQ(UART_1_INST_INT_IRQN);
-		DL_ADC12_startConversion(ADC12_0_INST);
+	//NVIC_ClearPendingIRQ(UART_1_INST_INT_IRQN);
+	NVIC_EnableIRQ(ADC12_0_INST_INT_IRQN);
+	//NVIC_EnableIRQ(UART_1_INST_INT_IRQN);
+	//DL_SYSCTL_enableSleepOnExit();
+	DL_ADC12_startConversion(ADC12_0_INST);
 			
     while (1) {
 			if(gCheckADC == true) {
-				
-				//¶ÁÆµÂÊ
+				sendString("ADC Complete\r\n");
+				//ï¿½ï¿½Æµï¿½ï¿½
 				float frequency = getFreq();
+				//float frequency = 10.0;
 				uint16_t index = freq2index(frequency);
+				sendString("index\r\n");
 				SamplePoints[index].freq = frequency;
 				sendString("Freq: "); sendNum(frequency);
-				//¶ÁÆµÂÊºÍÏàÎ»
+				//ï¿½ï¿½Æµï¿½Êºï¿½ï¿½ï¿½Î»
 				uint16_t vol_db = DL_ADC12_getMemResult(ADC12_0_INST, DL_ADC12_MEM_IDX_0);
 				uint16_t vol_deg = DL_ADC12_getMemResult(ADC12_0_INST, DL_ADC12_MEM_IDX_1);
 				
-				sendString("vol_db: "); sendNum((float)vol_db * 3300 / 4095);
-				sendString("vol_deg: "); sendNum((float)vol_deg * 3300 / 4095);
+				// sendString("vol_db: "); sendNum((float)vol_db * 3300 / 4095);
+				// sendString("vol_deg: "); sendNum((float)vol_deg * 3300 / 4095);
 				
 				float gain_db = vol2gain((float)vol_db * 3300 / 4095);
 				float gain_deg = vol2deg((float)vol_deg * 3300 / 4095);
@@ -91,7 +95,7 @@ int main(void)
 				DL_ADC12_enableConversions(ADC12_0_INST);
 				DL_ADC12_startConversion(ADC12_0_INST);
 			}
-			DL_Common_delayCycles(1000);
+			//DL_Common_delayCycles(1000);
     }
 }
 
@@ -100,6 +104,7 @@ void ADC12_0_INST_IRQHandler(void)
     switch (DL_ADC12_getPendingInterrupt(ADC12_0_INST)) {
         case DL_ADC12_IIDX_MEM1_RESULT_LOADED:
 						DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_PIN_G_PIN);
+			sendString("ADC Interrupt\r\n");
             gCheckADC = true;
             break;
         default:
@@ -107,30 +112,41 @@ void ADC12_0_INST_IRQHandler(void)
     }
 }
 
-void UART_1_INST_IRQHandler(void) {
-		if(DL_UART_Main_getPendingInterrupt(UART_1_INST) == DL_UART_MAIN_IIDX_RX) {
-				uint8_t rx_data = DL_UART_Main_receiveData(UART_1_INST);
-				//½áÊø±êÊ¶·û'\r'
-				if(rx_data == '\r') {
-					uart_rx_buffer[uart_rx_index] = '\0';
-					uart_rx_finish = true;
-					uart_rx_start = false;
-					uart_rx_index = 0;
-				}
-				//¿ªÊ¼±êÊ¶·û'\n'
-				else if(rx_data == '\n') {
-					uart_rx_start = true;
-					uart_rx_finish = false;
-					uart_rx_index = 0;
-				}
-				//¶ÁÈ¡ÆµÂÊ
-				else if(uart_rx_start && uart_rx_index < RX_BUFFER_SIZE - 1) {
-					uart_rx_buffer[uart_rx_index++] = rx_data;
-				}
-		}
+void UART_0_INST_IRQHandler(void) {
+	DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_PIN_R_PIN);
+
+	while(DL_UART_Main_isRXFIFOEmpty(UART_0_INST) == false && !uart_rx_finish) {
+	uint8_t rx_data = DL_UART_Main_receiveData(UART_0_INST);
+	//sendString("Receive data\r\n");
+	//ï¿½ï¿½Ê¼ï¿½ï¿½Ê¶ï¿½ï¿½'\n'
+	if(rx_data == '\n') {
+		sendString("Start\r\n");
+		uart_rx_start = true;
+		uart_rx_finish = false;
+		uart_rx_index = 0;
+	}
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½'\r'
+	else if(rx_data == '\r' && uart_rx_start) {
+		sendString("Finish\r\n");
+		uart_rx_buffer[uart_rx_index] = '\0';
+		uart_rx_finish = true;
+		uart_rx_start = false;
+		uart_rx_index = 0;
+	}
+	//ï¿½ï¿½È¡Æµï¿½ï¿½
+	else if(uart_rx_start && uart_rx_index < RX_BUFFER_SIZE - 1) {
+		sendData(rx_data);
+		sendString("\r\n");
+		uart_rx_buffer[uart_rx_index++] = rx_data;
+	}
+	}
+	
 }
 
 uint16_t freq2index(float freq) {
+		if(freq < 1.0 || freq > 45.0) {
+			return 0;
+		}
 		uint16_t index = (freq - 1.0) / 0.2f;
 		return index;
 }
@@ -145,24 +161,23 @@ float vol2deg(float voltage) {
 
 float getFreq() {
 		uart_rx_finish = false;
-		DL_UART_Main_enableInterrupt(UART_1_INST, DL_UART_MAIN_INTERRUPT_RX);
+		NVIC_EnableIRQ(UART_0_INST_INT_IRQN);
 		while(!uart_rx_finish);
-		uart_rx_finish = false;
-		DL_UART_Main_disableInterrupt(UART_1_INST, DL_UART_MAIN_INTERRUPT_RX);
+		NVIC_DisableIRQ(UART_0_INST_INT_IRQN);
 		
 		return findFloat(uart_rx_buffer);
 }
 
 void sendNum(float freq) {
-		uint16_t sendData_1 = freq;		//ÕûÊý²¿·Ö
-		uint16_t sendData_2 = (freq - sendData_1) * 10;	//Ò»Î»Ð¡Êý
-		//·¢ËÍÕûÊý²¿·Ö
+		uint16_t sendData_1 = freq;		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		uint16_t sendData_2 = (freq - sendData_1) * 10;	//Ò»Î»Ð¡ï¿½ï¿½
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		sendData((sendData_1 / 1000) + 48); 		//Ç§Î»
-		sendData((sendData_1 / 100 % 10) + 48);	//°ÙÎ»
+		sendData((sendData_1 / 100 % 10) + 48);	//ï¿½ï¿½Î»
 		sendData((sendData_1 / 10 % 10) + 48);	//Ê®Î»
-		sendData((sendData_1 % 10) + 48);				//¸öÎ»
+		sendData((sendData_1 % 10) + 48);				//ï¿½ï¿½Î»
 		sendData(46);
-		//·¢ËÍÐ¡Êý²¿·Ö
+		//ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		sendData((sendData_2) + 48);
 		
 		sendData(13); sendData(10);
@@ -176,8 +191,8 @@ void sendString(char* p) {
 }
 
 void sendData(uint8_t data) {
-		while(DL_UART_isBusy(UART_0_INST)){};
-		DL_UART_Main_transmitData(UART_0_INST, data);
+		while(DL_UART_isBusy(UART_1_INST)){};
+		DL_UART_Main_transmitData(UART_1_INST, data);
 }
 float findFloat(unsigned char* str) {
     double num = 0;
