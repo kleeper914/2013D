@@ -45,6 +45,18 @@ float findFloat(unsigned char* str);
 #define SAMPLE_SIZE	 210		//����1-43MHzƵ�ʵ�����ź����Ƶ�ʷ���,ÿ0.2MHz����һ����
 #define RX_BUFFER_SIZE	30	//���ڽ��ջ�������С
 
+#define E     DL_GPIO_readPins(GPIO_GRP_0_PORT, GPIO_GRP_0_E_PIN)
+#define DB4   DL_GPIO_readPins(GPIO_GRP_0_PORT, GPIO_GRP_0_DB4_PIN)
+#define DB5   DL_GPIO_readPins(GPIO_GRP_0_PORT, GPIO_GRP_0_DB5_PIN)
+#define DB6   DL_GPIO_readPins(GPIO_GRP_0_PORT, GPIO_GRP_0_DB6_PIN)
+#define DB7   DL_GPIO_readPins(GPIO_GRP_0_PORT, GPIO_GRP_0_DB7_PIN)
+
+volatile uint8_t stage = 0;
+volatile uint8_t LCD_Byte = '\0';
+volatile unsigned char LCD_Data[30] = {[0]='\0'};
+volatile unsigned char* LCD_Data_p = LCD_Data;
+volatile uint8_t decode_done = 0;
+
 typedef struct{
 	float freq;
 	float gain_db;
@@ -65,21 +77,27 @@ int main(void)
     SYSCFG_DL_init();
 	//NVIC_ClearPendingIRQ(UART_1_INST_INT_IRQN);
 	NVIC_EnableIRQ(ADC12_0_INST_INT_IRQN);
-	//NVIC_EnableIRQ(UART_1_INST_INT_IRQN);
+	//NVIC_EnableIRQ(UART_0_INST_INT_IRQN);
 	//DL_SYSCTL_enableSleepOnExit();
 	DL_ADC12_startConversion(ADC12_0_INST);
+	//NVIC_EnableIRQ(GPIO_GRP_0_INT_IRQN);
 			
     while (1) {
 			if(gCheckADC == true) {
 				sendString("ADC Complete\r\n");
-				//��Ƶ��
+				DL_ADC12_disableConversions(ADC12_0_INST);
+				DL_ADC12_disableInterrupt(ADC12_0_INST, DL_ADC12_INTERRUPT_MEM1_RESULT_LOADED);
+				NVIC_DisableIRQ(ADC12_0_INST_INT_IRQN);
 				float frequency = getFreq();
 				//float frequency = 10.0;
 				uint16_t index = freq2index(frequency);
 				sendString("index\r\n");
 				SamplePoints[index].freq = frequency;
-				sendString("Freq: "); sendNum(frequency);
-				//��Ƶ�ʺ���λ
+				sendString("Freq: ");
+
+				char str[20];	sprintf(str, "%.2f", frequency);
+				sendString(str);	sendString("\r\n");
+				
 				uint16_t vol_db = DL_ADC12_getMemResult(ADC12_0_INST, DL_ADC12_MEM_IDX_0);
 				uint16_t vol_deg = DL_ADC12_getMemResult(ADC12_0_INST, DL_ADC12_MEM_IDX_1);
 				
@@ -92,6 +110,8 @@ int main(void)
 				sendString("gain_deg: "); sendNum(gain_deg);
 				
 				gCheckADC = false;
+				DL_ADC12_enableInterrupt(ADC12_0_INST, DL_ADC12_INTERRUPT_MEM1_RESULT_LOADED);
+				NVIC_EnableIRQ(ADC12_0_INST_INT_IRQN);
 				DL_ADC12_enableConversions(ADC12_0_INST);
 				DL_ADC12_startConversion(ADC12_0_INST);
 			}
@@ -112,35 +132,91 @@ void ADC12_0_INST_IRQHandler(void)
     }
 }
 
-void UART_0_INST_IRQHandler(void) {
-	DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_PIN_R_PIN);
+void GROUP1_IRQHandler(void)
+{
+    switch (DL_Interrupt_getPendingGroup(DL_INTERRUPT_GROUP_1)) {
+        case GPIO_GRP_0_E_IIDX :
+		DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_PIN_R_PIN);
+            if (E == GPIO_GRP_0_E_PIN) {
+                if(stage == 0){
+                    uint8_t db4 = (DB4 >> 1);
+                    uint8_t db5 = (DB5 >> 28); 
+                    uint8_t db6 = (DB6 >> 31); 
+                    uint8_t db7 = DB7 >> 5; 
 
-	while(DL_UART_Main_isRXFIFOEmpty(UART_0_INST) == false && !uart_rx_finish) {
-	uint8_t rx_data = DL_UART_Main_receiveData(UART_0_INST);
-	//sendString("Receive data\r\n");
-	//��ʼ��ʶ��'\n'
-	if(rx_data == '\n') {
-		sendString("Start\r\n");
-		uart_rx_start = true;
-		uart_rx_finish = false;
-		uart_rx_index = 0;
-	}
-	//������ʶ��'\r'
-	else if(rx_data == '\r' && uart_rx_start) {
-		sendString("Finish\r\n");
-		uart_rx_buffer[uart_rx_index] = '\0';
-		uart_rx_finish = true;
-		uart_rx_start = false;
-		uart_rx_index = 0;
-	}
-	//��ȡƵ��
-	else if(uart_rx_start && uart_rx_index < RX_BUFFER_SIZE - 1) {
-		sendData(rx_data);
-		sendString("\r\n");
-		uart_rx_buffer[uart_rx_index++] = rx_data;
-	}
-	}
-	
+                    LCD_Byte = '\0';
+                    LCD_Byte += (db4 << 4);
+                    LCD_Byte += (db5 << 5);
+                    LCD_Byte += (db6 << 6);
+                    LCD_Byte += (db7 << 7);
+                    if(LCD_Byte == 128){
+                        stage = 1;
+                    }
+                    
+                }else if(stage == 1){
+                    uint8_t db4 = DB4 >> 1;
+                    uint8_t db5 = DB5 >> 28; 
+                    uint8_t db6 = DB6 >> 31; 
+                    uint8_t db7 = DB7 >> 5; 
+
+                    //sendStr("try to syn");
+                    LCD_Byte += db4;
+                    LCD_Byte += (db5 << 1);
+                    LCD_Byte += (db6 << 2);
+                    LCD_Byte += (db7 << 3);
+                    if(LCD_Byte == 128){
+                        stage = 2;
+						decode_done = 0;
+                        //sendStr("syn success!");
+						//sendString("syn success\r\n");
+                    }else{
+                        stage = 0;
+                    }
+                }
+                else if(stage == 2){
+                    uint8_t db4 = DB4 >> 1;
+                    uint8_t db5 = DB5 >> 28; 
+                    uint8_t db6 = DB6 >> 31; 
+                    uint8_t db7 = DB7 >> 5; 
+
+                    LCD_Byte = '\0';
+                    LCD_Byte += (db4 << 4);
+                    LCD_Byte += (db5 << 5);
+                    LCD_Byte += (db6 << 6);
+                    LCD_Byte += (db7 << 7);
+                    //LCD_Data_p = LCD_Data;
+                    stage = 3;
+                    
+                }else if(stage == 3){
+                    uint8_t db4 = DB4 >> 1;
+                    uint8_t db5 = DB5 >> 28; 
+                    uint8_t db6 = DB6 >> 31; 
+                    uint8_t db7 = DB7 >> 5; 
+
+                    LCD_Byte += db4;
+                    LCD_Byte += (db5 << 1);
+                    LCD_Byte += (db6 << 2);
+                    LCD_Byte += (db7 << 3);
+                    //sendData('\r');
+                    //sendData('\r');sendData('\n');
+                    //sendStr("the end");
+                    if(LCD_Byte == 192){
+                        stage = 0;
+                        *LCD_Data_p = '\0';
+                        LCD_Data_p = LCD_Data;
+                        decode_done = 1;
+                    }else{
+                        stage = 2;
+                        *LCD_Data_p = LCD_Byte;
+                        LCD_Data_p++;
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+    }
+    DL_GPIO_clearInterruptStatus(GPIO_GRP_0_PORT, GPIO_GRP_0_E_PIN);
 }
 
 uint16_t freq2index(float freq) {
@@ -160,12 +236,14 @@ float vol2deg(float voltage) {
 }
 
 float getFreq() {
-		uart_rx_finish = false;
-		NVIC_EnableIRQ(UART_0_INST_INT_IRQN);
-		while(!uart_rx_finish);
-		NVIC_DisableIRQ(UART_0_INST_INT_IRQN);
-		
-		return findFloat(uart_rx_buffer);
+		NVIC_EnableIRQ(GPIO_GRP_0_INT_IRQN);
+		sendString("Start E Interrupt\r\n");
+		while(decode_done == 0) {
+			__WFE();
+		}
+		NVIC_DisableIRQ(GPIO_GRP_0_INT_IRQN);
+		sendString("End E Interrupt\r\n");
+		return findFloat(LCD_Data_p);
 }
 
 void sendNum(float freq) {

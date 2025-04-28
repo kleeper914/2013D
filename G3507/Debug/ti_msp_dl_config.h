@@ -98,18 +98,18 @@ extern "C" {
 #define UART_1_IBRD_40_MHZ_115200_BAUD                                      (21)
 #define UART_1_FBRD_40_MHZ_115200_BAUD                                      (45)
 /* Defines for UART_0 */
-#define UART_0_INST                                                        UART0
+#define UART_0_INST                                                        UART1
 #define UART_0_INST_FREQUENCY                                           40000000
-#define UART_0_INST_IRQHandler                                  UART0_IRQHandler
-#define UART_0_INST_INT_IRQN                                      UART0_INT_IRQn
+#define UART_0_INST_IRQHandler                                  UART1_IRQHandler
+#define UART_0_INST_INT_IRQN                                      UART1_INT_IRQn
 #define GPIO_UART_0_RX_PORT                                                GPIOA
 #define GPIO_UART_0_TX_PORT                                                GPIOA
-#define GPIO_UART_0_RX_PIN                                         DL_GPIO_PIN_1
-#define GPIO_UART_0_TX_PIN                                         DL_GPIO_PIN_0
-#define GPIO_UART_0_IOMUX_RX                                      (IOMUX_PINCM2)
-#define GPIO_UART_0_IOMUX_TX                                      (IOMUX_PINCM1)
-#define GPIO_UART_0_IOMUX_RX_FUNC                       IOMUX_PINCM2_PF_UART0_RX
-#define GPIO_UART_0_IOMUX_TX_FUNC                       IOMUX_PINCM1_PF_UART0_TX
+#define GPIO_UART_0_RX_PIN                                        DL_GPIO_PIN_18
+#define GPIO_UART_0_TX_PIN                                        DL_GPIO_PIN_17
+#define GPIO_UART_0_IOMUX_RX                                     (IOMUX_PINCM40)
+#define GPIO_UART_0_IOMUX_TX                                     (IOMUX_PINCM39)
+#define GPIO_UART_0_IOMUX_RX_FUNC                      IOMUX_PINCM40_PF_UART1_RX
+#define GPIO_UART_0_IOMUX_TX_FUNC                      IOMUX_PINCM39_PF_UART1_TX
 #define UART_0_BAUD_RATE                                                (115200)
 #define UART_0_IBRD_40_MHZ_115200_BAUD                                      (21)
 #define UART_0_FBRD_40_MHZ_115200_BAUD                                      (45)
@@ -144,6 +144,28 @@ extern "C" {
 /* Defines for PIN_R: GPIOA.2 with pinCMx 7 on package pin 8 */
 #define GPIO_LEDS_PIN_R_PIN                                      (DL_GPIO_PIN_2)
 #define GPIO_LEDS_PIN_R_IOMUX                                     (IOMUX_PINCM7)
+/* Port definition for Pin Group GPIO_GRP_0 */
+#define GPIO_GRP_0_PORT                                                  (GPIOA)
+
+/* Defines for E: GPIOA.0 with pinCMx 1 on package pin 1 */
+// pins affected by this interrupt request:["E"]
+#define GPIO_GRP_0_INT_IRQN                                     (GPIOA_INT_IRQn)
+#define GPIO_GRP_0_INT_IIDX                     (DL_INTERRUPT_GROUP1_IIDX_GPIOA)
+#define GPIO_GRP_0_E_IIDX                                    (DL_GPIO_IIDX_DIO0)
+#define GPIO_GRP_0_E_PIN                                         (DL_GPIO_PIN_0)
+#define GPIO_GRP_0_E_IOMUX                                        (IOMUX_PINCM1)
+/* Defines for DB4: GPIOA.1 with pinCMx 2 on package pin 2 */
+#define GPIO_GRP_0_DB4_PIN                                       (DL_GPIO_PIN_1)
+#define GPIO_GRP_0_DB4_IOMUX                                      (IOMUX_PINCM2)
+/* Defines for DB5: GPIOA.28 with pinCMx 3 on package pin 3 */
+#define GPIO_GRP_0_DB5_PIN                                      (DL_GPIO_PIN_28)
+#define GPIO_GRP_0_DB5_IOMUX                                      (IOMUX_PINCM3)
+/* Defines for DB6: GPIOA.31 with pinCMx 6 on package pin 5 */
+#define GPIO_GRP_0_DB6_PIN                                      (DL_GPIO_PIN_31)
+#define GPIO_GRP_0_DB6_IOMUX                                      (IOMUX_PINCM6)
+/* Defines for DB7: GPIOA.5 with pinCMx 10 on package pin 11 */
+#define GPIO_GRP_0_DB7_PIN                                       (DL_GPIO_PIN_5)
+#define GPIO_GRP_0_DB7_IOMUX                                     (IOMUX_PINCM10)
 
 
 
