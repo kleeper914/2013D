@@ -31,7 +31,7 @@
  */
 
 #include "ti_msp_dl_config.h"
-//#include <stdio.h>
+#include <stdio.h>
 
 uint16_t freq2index(float freq);
 void sendNum(float freq);
@@ -42,8 +42,8 @@ float vol2gain(float voltage);
 float vol2deg(float voltage);
 float findFloat(unsigned char* str);
 
-#define SAMPLE_SIZE	 210		//����1-43MHzƵ�ʵ�����ź����Ƶ�ʷ���,ÿ0.2MHz����һ����
-#define RX_BUFFER_SIZE	30	//���ڽ��ջ�������С
+#define SAMPLE_SIZE	 210		//1-43MHz，每隔0.2MHz采样一次
+#define RX_BUFFER_SIZE	30	    //串口接收缓冲区大小
 
 #define E     DL_GPIO_readPins(GPIO_GRP_0_PORT, GPIO_GRP_0_E_PIN)
 #define DB4   DL_GPIO_readPins(GPIO_GRP_0_PORT, GPIO_GRP_0_DB4_PIN)
@@ -63,59 +63,53 @@ typedef struct{
 	float phase_deg;
 }AmpPoint;
 
-volatile AmpPoint SamplePoints[SAMPLE_SIZE];	//�洢��������źŵ���Ϣ
+volatile AmpPoint SamplePoints[SAMPLE_SIZE];	//放大器对应频率的幅频相频信息
 
 volatile bool gCheckADC = false;
 volatile bool uart_rx_finish = false;
 volatile bool uart_rx_start = false;
 
 volatile unsigned char uart_rx_buffer[RX_BUFFER_SIZE];
-volatile uint8_t uart_rx_index = 0;		//���ջ���������
+volatile uint8_t uart_rx_index = 0;		        //串口缓冲区索引
 
 int main(void)
 {
     SYSCFG_DL_init();
-	//NVIC_ClearPendingIRQ(UART_1_INST_INT_IRQN);
 	NVIC_EnableIRQ(ADC12_0_INST_INT_IRQN);
-	//NVIC_EnableIRQ(UART_0_INST_INT_IRQN);
-	//DL_SYSCTL_enableSleepOnExit();
-	DL_ADC12_startConversion(ADC12_0_INST);
-	//NVIC_EnableIRQ(GPIO_GRP_0_INT_IRQN);
+    NVIC_EnableIRQ(GPIO_GRP_0_INT_IRQN);
+	//DL_ADC12_startConversion(ADC12_0_INST);
 			
     while (1) {
-			if(gCheckADC == true) {
-				sendString("ADC Complete\r\n");
-				DL_ADC12_disableConversions(ADC12_0_INST);
-				DL_ADC12_disableInterrupt(ADC12_0_INST, DL_ADC12_INTERRUPT_MEM1_RESULT_LOADED);
-				NVIC_DisableIRQ(ADC12_0_INST_INT_IRQN);
-				float frequency = getFreq();
-				//float frequency = 10.0;
-				uint16_t index = freq2index(frequency);
-				sendString("index\r\n");
-				SamplePoints[index].freq = frequency;
-				sendString("Freq: ");
+        //sendString("hello world\r\n");
+        if(decode_done) { //轮询等待读取频率完成
+            NVIC_DisableIRQ(GPIO_GRP_0_INT_IRQN);   //关闭GPIOA Pin E输入中断
+            decode_done = 0;
+            //频率计读取完毕再开启ADC采样
+            DL_ADC12_enableConversions(ADC12_0_INST);
+            DL_ADC12_startConversion(ADC12_0_INST);
+            while(gCheckADC == false);      //阻塞等待ADC采样完成
+            sendString("ADC Complete\r\n");
+            gCheckADC = false;
+            //存储该频率下相关的幅频和相频信息
+            float frequency = getFreq();
+            //float frequency = 10.0;
+            uint16_t index = freq2index(frequency);
+            SamplePoints[index].freq = frequency;
+            sendString("Freq: ");
+            char str[20];	sprintf(str, "%.2f", frequency);
+			sendString(str);	sendString("\r\n");
 
-				char str[20];	sprintf(str, "%.2f", frequency);
-				sendString(str);	sendString("\r\n");
-				
-				uint16_t vol_db = DL_ADC12_getMemResult(ADC12_0_INST, DL_ADC12_MEM_IDX_0);
-				uint16_t vol_deg = DL_ADC12_getMemResult(ADC12_0_INST, DL_ADC12_MEM_IDX_1);
-				
-				// sendString("vol_db: "); sendNum((float)vol_db * 3300 / 4095);
-				// sendString("vol_deg: "); sendNum((float)vol_deg * 3300 / 4095);
-				
-				float gain_db = vol2gain((float)vol_db * 3300 / 4095);
-				float gain_deg = vol2deg((float)vol_deg * 3300 / 4095);
-				sendString("gain_db: "); sendNum(gain_db);
-				sendString("gain_deg: "); sendNum(gain_deg);
-				
-				gCheckADC = false;
-				DL_ADC12_enableInterrupt(ADC12_0_INST, DL_ADC12_INTERRUPT_MEM1_RESULT_LOADED);
-				NVIC_EnableIRQ(ADC12_0_INST_INT_IRQN);
-				DL_ADC12_enableConversions(ADC12_0_INST);
-				DL_ADC12_startConversion(ADC12_0_INST);
-			}
-			//DL_Common_delayCycles(1000);
+            uint16_t vol_db = DL_ADC12_getMemResult(ADC12_0_INST, DL_ADC12_MEM_IDX_0);
+			uint16_t vol_deg = DL_ADC12_getMemResult(ADC12_0_INST, DL_ADC12_MEM_IDX_1);
+            float gain_db = vol2gain((float)vol_db * 3300 / 4095);
+			float gain_deg = vol2deg((float)vol_deg * 3300 / 4095);
+			sendString("gain_db: "); sendNum(gain_db);
+			sendString("gain_deg: "); sendNum(gain_deg);
+            SamplePoints[index].gain_db = gain_db;
+            SamplePoints[index].phase_deg = gain_deg;
+
+            NVIC_EnableIRQ(GPIO_GRP_0_INT_IRQN);    //开启GPIOA Pin E输入中断
+        }
     }
 }
 
@@ -136,7 +130,7 @@ void GROUP1_IRQHandler(void)
 {
     switch (DL_Interrupt_getPendingGroup(DL_INTERRUPT_GROUP_1)) {
         case GPIO_GRP_0_E_IIDX :
-		DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_PIN_R_PIN);
+        DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_PIN_R_PIN);
             if (E == GPIO_GRP_0_E_PIN) {
                 if(stage == 0){
                     uint8_t db4 = (DB4 >> 1);
@@ -166,9 +160,7 @@ void GROUP1_IRQHandler(void)
                     LCD_Byte += (db7 << 3);
                     if(LCD_Byte == 128){
                         stage = 2;
-						decode_done = 0;
-                        //sendStr("syn success!");
-						//sendString("syn success\r\n");
+                        sendString("LCD Start\r\n");
                     }else{
                         stage = 0;
                     }
@@ -205,6 +197,7 @@ void GROUP1_IRQHandler(void)
                         *LCD_Data_p = '\0';
                         LCD_Data_p = LCD_Data;
                         decode_done = 1;
+                        sendString("LCD Done\r\n");
                     }else{
                         stage = 2;
                         *LCD_Data_p = LCD_Byte;
@@ -216,9 +209,8 @@ void GROUP1_IRQHandler(void)
         default:
             break;
     }
-    DL_GPIO_clearInterruptStatus(GPIO_GRP_0_PORT, GPIO_GRP_0_E_PIN);
+            DL_GPIO_clearInterruptStatus(GPIO_GRP_0_PORT, GPIO_GRP_0_E_PIN);
 }
-
 uint16_t freq2index(float freq) {
 		if(freq < 1.0 || freq > 45.0) {
 			return 0;
@@ -236,29 +228,20 @@ float vol2deg(float voltage) {
 }
 
 float getFreq() {
-		NVIC_EnableIRQ(GPIO_GRP_0_INT_IRQN);
-		sendString("Start E Interrupt\r\n");
-		while(decode_done == 0) {
-			__WFE();
-		}
-		NVIC_DisableIRQ(GPIO_GRP_0_INT_IRQN);
-		sendString("End E Interrupt\r\n");
 		return findFloat(LCD_Data_p);
 }
 
 void sendNum(float freq) {
-		uint16_t sendData_1 = freq;		//��������
-		uint16_t sendData_2 = (freq - sendData_1) * 10;	//һλС��
-		//������������
-		sendData((sendData_1 / 1000) + 48); 		//ǧλ
-		sendData((sendData_1 / 100 % 10) + 48);	//��λ
-		sendData((sendData_1 / 10 % 10) + 48);	//ʮλ
-		sendData((sendData_1 % 10) + 48);				//��λ
-		sendData(46);
-		//����С������
-		sendData((sendData_2) + 48);
+		uint16_t sendData_1 = freq;     //整数部分
+		uint16_t sendData_2 = (freq - sendData_1) * 10; //一位小数
 		
-		sendData(13); sendData(10);
+		sendData((sendData_1 / 1000) + 48);     //千位
+		sendData((sendData_1 / 100 % 10) + 48); //百位
+		sendData((sendData_1 / 10 % 10) + 48);  //十位
+		sendData((sendData_1 % 10) + 48);       //个位
+		sendData(46);
+		sendData((sendData_2) + 48);            //一位小数
+		sendData(13); sendData(10);       // \r\n
 }
 
 void sendString(char* p) {
